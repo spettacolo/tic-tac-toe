@@ -1,15 +1,37 @@
-// src/app/page.tsx
+// src/page.tsx
 'use client';
 import Link from 'next/link';
+import { useState } from 'react';
 
 export default function Home() {
+  const [inviteCode, setInviteCode] = useState('');
+
   return (
     <main className="container text-center" style={{ padding: '50px' }}>
       <h1>Benvenuto al Gioco del Tris</h1>
-      <p>Premi il pulsante per iniziare a giocare.</p>
+      <p>Seleziona una modalità di gioco:</p>
+      
+      {/* Modalità Locale */}
       <Link href="/game">
-        Inizia il Gioco
+        <button className="btn btn-primary">Gioca in locale</button>
       </Link>
+      
+      {/* Modalità Online */}
+      <div className="mt-3">
+        <h2>Gioca Online</h2>
+        <p>Inserisci un codice invito o creane uno nuovo:</p>
+        <input
+          type="text"
+          placeholder="Codice invito"
+          value={inviteCode}
+          onChange={(e) => setInviteCode(e.target.value)}
+          style={{ marginRight: '10px', padding: '5px' }}
+        />
+        <Link href={inviteCode ? `/game/online/${inviteCode}` : '#'}>
+          <button className="btn btn-success" disabled={!inviteCode}>Unisciti</button>
+        </Link>
+      </div>
+
       <style jsx>{`
         main {
           display: flex;
@@ -19,7 +41,7 @@ export default function Home() {
           min-height: 100vh;
           background-color: #f0f0f0;
         }
-        h1 {
+        h1, h2 {
           font-family: Arial, sans-serif;
           font-weight: 700;
           text-transform: uppercase;
@@ -28,19 +50,11 @@ export default function Home() {
         }
         p {
           font-size: 1.2rem;
-          margin-bottom: 30px;
+          margin-bottom: 20px;
         }
-        a {
-          display: inline-block;
+        .btn {
           padding: 10px 20px;
-          background-color: #0070f3;
-          color: #fff;
-          text-decoration: none;
-          border-radius: 4px;
-          transition: background-color 0.2s ease;
-        }
-        a:hover {
-          background-color: #005bb5;
+          margin: 5px;
         }
       `}</style>
     </main>
