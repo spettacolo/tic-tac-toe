@@ -8,7 +8,7 @@ export default function Home() {
 
   return (
     <main className="container text-center" style={{ padding: '50px' }}>
-      <h1>Benvenuto al Gioco del Tris</h1>
+      <h1>Welcome to Tic Tac Toe</h1>
       <p>Seleziona una modalità di gioco:</p>
       
       {/* Modalità Locale */}
