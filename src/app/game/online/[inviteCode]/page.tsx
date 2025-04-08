@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import io from 'socket.io-client';
-import Chat from '../../../components/Chat';
+//import Chat from '../../../components/Chat';
+import ChatPopup from '../../../components/ChatPopup';
 
 let socket: any;
 
@@ -62,7 +63,8 @@ export default function OnlineGame() {
         <button className="btn btn-primary" onClick={resetGame}>Resetta Gioco</button>
         <h3 id="message" className="mt-3">{message}</h3>
       </div>
-      <Chat socket={socket} inviteCode={inviteCode} />
+      {/*<Chat socket={socket} inviteCode={inviteCode} /> */}
+      <ChatPopup socket={socket} inviteCode={inviteCode} />
       <style jsx>{`
         .cell {
           height: 120px;
