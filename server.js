@@ -4,6 +4,10 @@ const http = require('http');
 const { Server } = require('socket.io');
 require('dotenv').config({ path: './.env.local' });
 
+const fs = require('fs');
+const path = require('path');
+const filePath = path.join(__dirname, 'users.json');
+
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -21,6 +25,43 @@ const winningConditions = [
   [0, 3, 6], [1, 4, 7], [2, 5, 8],
   [0, 4, 8], [2, 4, 6]
 ];
+
+let users = [];
+
+function register(req, res) {
+  const { username, password } = req.body;
+  // Logica per registrare l'utente nel database
+  // Implementiamo la registrazione in tutto e per tutto senza simulazioni, salvando i dati in un file JSON
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Username e password sono obbligatori.' });
+  }
+  if (users.some(user => user.username === username)) {
+    return res.status(409).json({ message: 'Username già esistente.' });
+  }
+  // Aggiungi l'utente all'array users
+  users.push({ username, password });
+  // Salva l'array users nel file JSON
+  fs.writeFileSync(filePath, JSON.stringify(users, null, 2), 'utf8', (err) => {
+    if (err) {
+      console.error('Errore durante il salvataggio degli utenti:', err);
+      return res.status(500).json({ message: 'Errore durante il salvataggio degli utenti.' });
+    }
+  });
+  // Invia una risposta di successo
+  res.status(200).json({ message: 'Registrazione avvenuta con successo!' });
+}
+
+function login(req, res) {
+  const { username, password } = req.body;
+  // Logica per il login dell'utente
+  // Controlla se l'utente esiste e se la password è corretta
+  const user = users.find(user => user.username === username && user.password === password);
+  if (!user) {
+    return res.status(401).json({ message: 'Username o password errati.' });
+  }
+  // Invia una risposta di successo
+  res.status(200).json({ message: 'Login avvenuto con successo!' });
+}
 
 function checkResult(board) {
   for (const condition of winningConditions) {
