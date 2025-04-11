@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from 'react';
 import Draggable from 'react-draggable';
+import styles from './ChatPopup.module.css';
 
 type ChatPopupProps = {
   socket: any;
@@ -13,6 +14,7 @@ export default function ChatPopup({ socket, inviteCode }: ChatPopupProps) {
   const [input, setInput] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
   // Crea un ref per l'elemento draggabile
   const nodeRef = useRef<HTMLDivElement>(null);
 
@@ -52,86 +54,22 @@ export default function ChatPopup({ socket, inviteCode }: ChatPopupProps) {
   return (
     <>
       {/* Icona "bubble" */}
-      <div
-        style={{
-          position: 'fixed',
-          bottom: '20px',
-          right: '20px',
-          width: '50px',
-          height: '50px',
-          backgroundColor: '#007BFF',
-          borderRadius: '50%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: 'white',
-          cursor: 'pointer',
-          zIndex: 9999,
-        }}
-        onClick={toggleChat}
-      >
-        {/* Badge dei messaggi non letti */}
-        {unreadCount > 0 && (
-          <div
-            style={{
-              position: 'absolute',
-              top: '-5px',
-              right: '-5px',
-              backgroundColor: 'red',
-              borderRadius: '50%',
-              color: 'white',
-              padding: '3px 6px',
-              fontSize: '12px',
-            }}
-          >
-            {unreadCount}
-          </div>
-        )}
-        <span>Chat</span>
+      <div className={styles.bubble} onClick={toggleChat}>
+        {unreadCount > 0 && <div className={styles.badge}>{unreadCount}</div>}
+        Chat
       </div>
 
       {/* Popup chat draggable */}
       {isOpen && (
         <Draggable nodeRef={nodeRef as React.RefObject<HTMLElement>} handle=".chat-drag-handle">
-          <div
-            ref={nodeRef}
-            style={{
-              position: 'fixed',
-              bottom: '100px',
-              right: '20px',
-              width: '300px',
-              height: '400px',
-              backgroundColor: '#fff',
-              border: '1px solid #ccc',
-              borderRadius: '8px',
-              display: 'flex',
-              flexDirection: 'column',
-              zIndex: 10000,
-            }}
-          >
+          <div ref={nodeRef} className={styles.chatWindow}>
             {/* Barra in alto da trascinare */}
-            <div
-              className="chat-drag-handle"
-              style={{
-                backgroundColor: '#007BFF',
-                color: '#fff',
-                padding: '10px',
-                cursor: 'move',
-                borderTopLeftRadius: '8px',
-                borderTopRightRadius: '8px',
-              }}
-            >
+            <div className={`${styles.chatHeader} chat-drag-handle`}>
               <strong>Chat</strong>
             </div>
 
             {/* Area messaggi */}
-            <div
-              style={{
-                flex: 1,
-                overflowY: 'auto',
-                padding: '10px',
-              }}
-            >
+            <div className={styles.chatBody}>
               {messages.map((msg, idx) => (
                 <div key={idx} style={{ margin: '5px 0' }}>
                   {msg}
@@ -140,20 +78,20 @@ export default function ChatPopup({ socket, inviteCode }: ChatPopupProps) {
             </div>
 
             {/* Input per scrivere */}
-            <div style={{ display: 'flex', padding: '10px' }}>
+            <div className={styles.chatInputContainer}>
               <input
                 type="text"
                 placeholder="Scrivi un messaggio..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => { if (e.key === 'Enter') sendMessage(); }}
-                style={{
-                  flex: 1,
-                  padding: '5px',
-                  marginRight: '5px',
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') sendMessage();
                 }}
+                className={styles.chatInput}
               />
-              <button onClick={sendMessage}>Invia</button>
+              <button onClick={sendMessage} className={styles.chatSendButton}>
+                Invia
+              </button>
             </div>
           </div>
         </Draggable>
